@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI旅游规划助手</title>
+    <link rel="stylesheet" href="ai-travel-planner.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>AI旅游规划助手</h1>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-outline">登录</button>
+            <button class="btn btn-primary">注册</button>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 头部 -->
+        <div class="header">
+            <h2>AI行程助手</h2>
+        </div>
+
+        <!-- 行程规划表单 -->
+        <div class="planner-form">
+            <!-- 出发地 -->
+            <div class="form-group">
+                <label>出发地</label>
+                <div class="input-group">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" value="苏州">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- 目的地 -->
+            <div class="form-group">
+                <label>目的地</label>
+                <div class="input-group">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="请输入目的地">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- 目的地推荐 -->
+            <div class="destination-recommendations">
+                <div class="destination-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=guangzhou%20city%20skyline%20with%20canton%20tower&image_size=landscape_16_9" alt="广州">
+                    <span>广州</span>
+                </div>
+                <div class="destination-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=shenzhen%20city%20skyline%20modern%20buildings&image_size=landscape_16_9" alt="深圳">
+                    <span>深圳</span>
+                </div>
+                <div class="destination-card">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=guilin%20landscape%20with%20karst%20mountains&image_size=landscape_16_9" alt="桂林">
+                    <span>桂林</span>
+                </div>
+            </div>
+
+            <!-- 日期/时间 -->
+            <div class="form-group">
+                <label>日期/时间</label>
+                <div class="input-group">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="text" placeholder="请选择">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- 旅行偏好 -->
+            <div class="form-group">
+                <label>旅行偏好</label>
+                <div class="input-group">
+                    <i class="fas fa-heart"></i>
+                    <input type="text" placeholder="请选择">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- AI模型选择 -->
+            <div class="form-group">
+                <label>AI模型</label>
+                <div class="input-group">
+                    <i class="fas fa-brain"></i>
+                    <select id="aiModel">
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="gpt">GPT-4</option>
+                        <option value="claude">Claude</option>
+                        <option value="gemini">Gemini</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- AI规划行程按钮 -->
+            <button class="btn-ai-plan">
+                <i class="fas fa-robot"></i>
+                AI规划旅程
+            </button>
+
+            <!-- 手动创建线路 -->
+            <div class="manual-create">
+                <a href="#">手动创建线路</a>
+            </div>
+
+            <!-- 行程评估指标 -->
+            <div class="evaluation-metrics" style="margin-top: 20px;">
+                <h4>行程评估指标</h4>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <span class="metric-name">时间合理性</span>
+                        <span class="metric-value" id="timeScore">-</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-name">距离合理性</span>
+                        <span class="metric-value" id="distanceScore">-</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-name">景点合理性</span>
+                        <span class="metric-value" id="attractionScore">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 我的线路 -->
+        <div class="my-itineraries">
+            <div class="section-header">
+                <h3>我的线路</h3>
+                <a href="#" class="view-all">查看全部</a>
+            </div>
+            <div class="itinerary-card">
+                <div class="itinerary-info">
+                    <h4>广州深圳7日游：早茶、陈家祠、珠江夜游、长隆动物园、世界...</h4>
+                    <p>3月22日-3月28日</p>
+                </div>
+                <div class="itinerary-image">
+                    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=traditional%20chinese%20architecture%20chen%20family%20temple&image_size=square" alt="广州深圳7日游">
+                </div>
+            </div>
+        </div>
+
+        <!-- 导入线路/地点 -->
+        <div class="import-section">
+            <div class="import-card">
+                <h3>导入线路/地点</h3>
+                <p>粘贴链接、文本或上传图片，一键复制同款</p>
+                <button class="import-btn">
+                    <i class="fas fa-upload"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 旅行偏好选择模态框 -->
+    <div class="preference-modal" id="preferenceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>选择你的出行偏好</h3>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 同行伙伴 -->
+                <div class="preference-section">
+                    <h4>同行伙伴</h4>
+                    <div class="preference-options">
+                        <div class="preference-item">
+                            <i class="fas fa-user"></i>
+                            <span>独自出行</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-family"></i>
+                            <span>家庭出行</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-heart"></i>
+                            <span>情侣出行</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-users"></i>
+                            <span>朋友出行</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-old"></i>
+                            <span>老人同行</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 风格偏好 -->
+                <div class="preference-section">
+                    <h4>风格偏好</h4>
+                    <div class="preference-options">
+                        <div class="preference-item">
+                            <i class="fas fa-theater-masks"></i>
+                            <span>文化体验</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-star"></i>
+                            <span>经典必去</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-tree"></i>
+                            <span>自然风光</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-city"></i>
+                            <span>城市景观</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-landmark"></i>
+                            <span>历史古迹</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 行程节奏 -->
+                <div class="preference-section">
+                    <h4>行程节奏</h4>
+                    <div class="preference-options">
+                        <div class="preference-item">
+                            <i class="fas fa-bolt"></i>
+                            <span>紧凑</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-clock"></i>
+                            <span>适中</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-palm-tree"></i>
+                            <span>宽松</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 住宿偏好 -->
+                <div class="preference-section">
+                    <h4>住宿偏好</h4>
+                    <div class="preference-options">
+                        <div class="preference-item">
+                            <i class="fas fa-bed"></i>
+                            <span>舒适型</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-hotel"></i>
+                            <span>高档型</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-crown"></i>
+                            <span>豪华型</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 时间安排 -->
+                <div class="preference-section">
+                    <h4>时间安排</h4>
+                    <div class="preference-options">
+                        <div class="preference-item">
+                            <i class="fas fa-sun"></i>
+                            <span>偏早出</span>
+                        </div>
+                        <div class="preference-item">
+                            <i class="fas fa-moon"></i>
+                            <span>偏晚归</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 其他 -->
+                <div class="preference-section">
+                    <h4>其他</h4>
+                    <textarea placeholder="在这里输入更多偏好信息"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-block">完成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 地点选择模态框 -->
+    <div class="location-modal" id="locationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="locationModalTitle">选择地点</h3>
+                <button class="close-btn" id="closeLocationModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 搜索框 -->
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="locationSearch" placeholder="搜索城市...">
+                </div>
+                
+                <!-- 行政区域层级 -->
+                <div class="location-hierarchy">
+                    <div class="hierarchy-level" id="provinceLevel">
+                        <h4>省份</h4>
+                        <div class="location-list" id="provinceList"></div>
+                    </div>
+                    <div class="hierarchy-level" id="cityLevel" style="display: none;">
+                        <h4>城市</h4>
+                        <div class="location-list" id="cityList"></div>
+                    </div>
+                    <div class="hierarchy-level" id="districtLevel" style="display: none;">
+                        <h4>区县</h4>
+                        <div class="location-list" id="districtList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelLocation">取消</button>
+                <button class="btn btn-primary" id="confirmLocation">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日期选择模态框 -->
+    <div class="date-modal" id="dateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>选择日期</h3>
+                <button class="close-btn" id="closeDateModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 日历导航 -->
+                <div class="calendar-header">
+                    <button class="calendar-nav" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                    <h4 id="currentMonth"></h4>
+                    <button class="calendar-nav" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                
+                <!-- 日历网格 -->
+                <div class="calendar-grid">
+                    <div class="calendar-weekdays">
+                        <div>日</div>
+                        <div>一</div>
+                        <div>二</div>
+                        <div>三</div>
+                        <div>四</div>
+                        <div>五</div>
+                        <div>六</div>
+                    </div>
+                    <div class="calendar-days" id="calendarDays"></div>
+                </div>
+                
+                <!-- 日期范围显示 -->
+                <div class="date-range">
+                    <div class="date-picker">
+                        <label>开始日期</label>
+                        <input type="text" id="startDate" readonly>
+                    </div>
+                    <div class="date-picker">
+                        <label>结束日期</label>
+                        <input type="text" id="endDate" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelDate">取消</button>
+                <button class="btn btn-primary" id="confirmDate">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="ai-travel-planner.js"></script>
+</body>
+</html>
